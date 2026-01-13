@@ -17,7 +17,7 @@ public class CustomerRepository {
 
     private final RowMapper<Customer> customerRowMapper = (rs, rowNum) -> {
         Customer c = new Customer();
-        c.setId(rs.getInt("id"));
+        c.setCustomerId(rs.getInt("id"));
         c.setName(rs.getString("name"));
         c.setPhone(rs.getInt("phone"));
         c.setEmail(rs.getString("email"));
@@ -30,7 +30,7 @@ public class CustomerRepository {
         String sql = "INSERT INTO customer(id, name, phone, email, address) VALUES (?,?,?,?,?)";
         jdbcTemplate.update(
                 sql,
-                customer.getId(),
+                customer.getCustomerId(),
                 customer.getName(),
                 customer.getPhone(),
                 customer.getEmail(),

@@ -1,18 +1,18 @@
 package com.sachin.Billing.Software.Entity;
 
 public class Customer {
-    private int id;
+    private int customerId;
     private String name;
     private int phone;
     private String email;
     private String address;
 
-    public int getId() {
-        return id;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public String getName() {
