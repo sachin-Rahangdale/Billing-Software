@@ -16,7 +16,6 @@ public class CustomerService {
         return customerRepository.addCustomer(customer);
     }
     public Customer getCustomerById(int id){
-
         return customerRepository.getCustomerById(id);
     }
     public Customer updateCustomerById(int id, Customer customer){
