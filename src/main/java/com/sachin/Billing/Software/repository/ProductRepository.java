@@ -39,20 +39,33 @@ public class ProductRepository {
                product.getStockQuantity()
        );
        return product;
-
-
     }
     public Product getProductById(int id){
-        return
+        String sql = "select (id,name,price,gst_percentage,stock_quantity) from Product where id = ?";
+        return jdbcTemplate.query(sql, productRowMapper, id)
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
-    public Product updateProductById(int id, double price , int stock){
+    public Product updateProductById(int id, double price, int stock){
+        String sql = "UPDATE product SET price=?, stock_quantity=? WHERE id=?";
 
-        return
+        int rows = jdbcTemplate.update(sql, price, stock, id);
+
+        if (rows == 0) {
+            return null;
+        }
+        return getProductById(id);
     }
+
     public List<Product> getAllProductList(){
-        return
+        String sql = "SELECT id, name, price, gst_percentage, stock_quantity FROM product";
+        return jdbcTemplate.query(sql, productRowMapper);
     }
+
     public boolean deleteProductByID(int id){
-        return
+        String sql = "DELETE FROM product WHERE id=?";
+        int rows = jdbcTemplate.update(sql, id);
+        return rows > 0;
     }
 }
