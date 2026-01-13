@@ -1,38 +1,71 @@
 package com.sachin.Billing.Software.repository;
 
 import com.sachin.Billing.Software.Entity.Customer;
-import com.sachin.Billing.Software.Entity.Product;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
 import java.util.List;
-
 @Repository
 public class CustomerRepository {
 
-    private final List<Customer> custlist = new ArrayList<>();
+    private final JdbcTemplate jdbcTemplate;
 
-    public Customer  addCustomer(Customer customer){
-        custlist.add(customer);
+    public CustomerRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    private final RowMapper<Customer> customerRowMapper = (rs, rowNum) -> {
+        Customer c = new Customer();
+        c.setId(rs.getInt("id"));
+        c.setName(rs.getString("name"));
+        c.setPhone(rs.getInt("phone"));
+        c.setEmail(rs.getString("email"));
+        c.setAddress(rs.getString("address"));
+        return c;
+    };
+
+    // Add Customer
+    public Customer addCustomer(Customer customer){
+        String sql = "INSERT INTO customer(id, name, phone, email, address) VALUES (?,?,?,?,?)";
+        jdbcTemplate.update(
+                sql,
+                customer.getId(),
+                customer.getName(),
+                customer.getPhone(),
+                customer.getEmail(),
+                customer.getAddress()
+        );
         return customer;
     }
-    public Customer getCustomerById(int id){
-        return  custlist.stream().filter(c-> c.getId()==id).findFirst().orElse(null);
-    }
+
+    // Update Customer
     public Customer updateCustomerById(int id, Customer customer){
-        Customer currCustomer = getCustomerById(id);
-        if(currCustomer!=null){
-            currCustomer.setId(customer.getId());
-            currCustomer.setName(customer.getName());
-            currCustomer.setAddress(customer.getAddress());
-            currCustomer.setEmail(customer.getEmail());
-            currCustomer.setPhone(customer.getPhone());
-        }
-        return currCustomer;
-    }
-    public List<Customer> getAllCustomerList(){
-        return custlist;
+        String sql = "UPDATE customer SET name=?, phone=?, email=?, address=? WHERE id=?";
+        jdbcTemplate.update(
+                sql,
+                customer.getName(),
+                customer.getPhone(),
+                customer.getEmail(),
+                customer.getAddress(),
+                id
+        );
+        return getCustomerById(id);
     }
 
+    // Get Customer by ID
+    public Customer getCustomerById(int id){
+        String sql = "SELECT id, name, phone, email, address FROM customer WHERE id = ?";
+        return jdbcTemplate.query(sql, customerRowMapper, id)
+                .stream()
+                .findFirst()
+                .orElse(null);
+    }
+
+    // Get All Customers
+    public List<Customer> getAllCustomerList(){
+        String sql = "SELECT id, name, phone, email, address FROM customer";
+        return jdbcTemplate.query(sql, customerRowMapper);
+    }
 }
+
