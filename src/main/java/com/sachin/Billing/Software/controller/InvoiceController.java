@@ -19,7 +19,7 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
 
-    // Create invoice
+
     @PostMapping
     public ResponseEntity<Invoice> createInvoice(@RequestBody InvoiceRequestDTO requestDTO) {
         Invoice createdInvoice = invoiceService.createInvoice(requestDTO);
